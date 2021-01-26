@@ -1,0 +1,130 @@
+<html>
+  <head>
+    <title>Prime Finder</title>
+    <meta charset="UTF-8">
+    <style>
+      h1, h2, h3, h4 {
+        display: inline-block;
+        margin: 1rem 0rem 0rem
+      }
+
+      .content {
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .animation-container {
+        display: flex;
+        flex-direction: row;
+        height: 60px;
+        align-items: flex-end;
+      }
+
+      .animated-item {
+        width: 2rem;
+        height: 10px;
+        background-color: #3498db;
+      }
+
+      .calculating-text{
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .animated-dot {
+        height: 15px;
+        width: 15px;
+        margin-left: 1rem;
+        background-color: #3498db;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+
+  <div class="content">
+    <div class="container">
+      <h1>Prime Finder</h1>
+      <h3>Primes are pretty cool, here are some just for you</h3>
+      <div class="animation-container">
+        <p class="calculating-text">Calculating more</p>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+      </div>
+      <ul id="prime-list"></ul>
+    </div>
+  </div>
+
+  <script>
+
+      // Variables for the dots animation
+      const steps = 20
+      let currentIdx = -1 * steps
+
+      //Animation frame function updated on request animation frame
+      function dotsAnimation(){
+
+        const dots = document.getElementsByClassName("animated-dot")
+
+        for(let i = 0; i < dots.length; i++){
+          const comp = steps * (i + 1)
+          const diff = Math.abs(comp - currentIdx)
+          const height = Math.max(1, (steps * 2) - diff)
+          dots[i].style.marginBottom = Math.max(height)
+        }
+
+        if(currentIdx === (steps * 7) + steps) currentIdx = -1 * steps;
+        else currentIdx++
+
+        // CalculatePrimes is called here to do a small amount of
+        // work each frame thus likely not increasing frame times
+        calculatePrimes(10000)
+
+        // Queue the next frame
+        requestAnimationFrame(dotsAnimation)
+      }
+
+      // Start the animation.
+      // Using requestanimationFrame means we start our
+      // JavaScript execution at the beginning of the frame
+      requestAnimationFrame(dotsAnimation)
+
+
+      function calculatePrimes(amount) {
+          let primes = [];
+          for( var i = 1; i < amount; i++){
+              let candidate = (Math.floor(50000 * Math.random()) + 1) * Math.floor(10000000000000 * Math.random())
+              let isPrime = true;
+              for (let c = 2; c <= Math.sqrt(candidate); c++){
+                  if(candidate % c === 0){
+                      isPrime = false;
+                      break;
+                  }
+              }
+              if(isPrime){
+                  primes.push(candidate)
+              }
+          }
+
+        const primeList = document.getElementById("prime-list")
+        primes.forEach(prime => {
+          const node = document.createElement("LI")
+          node.appendChild(document.createTextNode(prime))
+          primeList.appendChild(node)
+        })
+      }
+
+  </script>
+  </body>
+</html>

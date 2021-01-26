@@ -1,0 +1,151 @@
+<!--
+  This demo is based off of Google Chromes "jank" example
+  https://github.com/GoogleChrome/devtools-samples
+-->
+
+<html>
+  <head>
+    <title>Icon Waterfall</title>
+    <meta charset="UTF-8">
+    <style>
+      body{
+        background-color: #222222;
+      }
+
+      .icon {
+        height: 2rem;
+        width: 2rem;
+        position: absolute;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        width: 8rem;
+        position: absolute;
+        top: 30;
+        left: 20;
+        z-index: 10;
+      }
+
+      .controls button{
+        color: white;
+        padding: 1rem;
+        background-color: #0098fa;
+        border:none;
+        margin-bottom: 1rem;
+      }
+
+      .icon-count{
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <img class="template icon" src="https://s3.amazonaws.com/zeitspace.com/media/background-logo-blue.svg"/>
+    <div class="controls">
+      <button class="add">Add Icons</button>
+      <button class="subtract">Subtract Icons</button>
+      <span class="icon-count">There are 10 icons</span>
+    </div>
+  </body>
+
+  <script>
+    const addBtn = document.querySelector(".add")
+    const subBtn = document.querySelector(".subtract")
+    const template = document.querySelector(".template")
+    const counter = document.querySelector(".icon-count")
+    
+    const documentSize = document.body.getBoundingClientRect()
+    const iconSize = template.getBoundingClientRect()
+    const maxTop = Math.floor(documentSize.height - iconSize.height)
+
+    const step = 5
+    let numIcons = 10
+    let iconList = []
+
+    let frame
+
+    // Setup the animation
+    function init() {
+
+      template.remove()
+
+      // Remove any existing icons
+      if(iconList.length > 0) {
+        for(i = 0; i < iconList.length; i++){
+          document.body.removeChild(iconList[i])
+        }
+      }
+
+      // Add all the icons to the screen
+      for(i = 0; i < numIcons; i++){
+        const icon = template.cloneNode()
+        const top = Math.floor(Math.random() * maxTop)
+
+        icon.style.left = (i / (numIcons / 97)) + 'vw';
+        icon.style.top = top + 'px';
+
+        if(top === maxTop){
+          icon.classList.add("up")
+        } else {
+          icon.classList.add("down")
+        }
+        document.body.appendChild(icon)
+      }
+
+      iconList = document.querySelectorAll('.icon');
+      counter.innerHTML = `There are ${numIcons} icons`
+
+      frame = requestAnimationFrame(animate)
+    }
+
+    // This funciton creates one frame of the animation
+    function animate() {
+      for(i = 0; i < iconList.length; i++){
+        const icon = iconList[i];
+        var pos = icon.classList.contains('down') ?
+            icon.offsetTop + step : icon.offsetTop - step;
+        if (pos < 0) pos = 0;
+        if (pos > maxTop) pos = maxTop;
+
+        // This is where our code becomes inefficient
+        // Here we are updating the style of our current element
+        icon.style.top = pos + 'px';
+
+        // Then we're reading the style.
+        // Since we just updated the style on this element the browser
+        // has to recalculate the layout to give us an accurate result.
+        // This is work that the browser doesn't have to do in the
+        // "better" version of this example
+        if (icon.offsetTop === 0) {
+          icon.classList.remove('up');
+          icon.classList.add('down');
+        }
+        if (icon.offsetTop === maxTop) {
+          icon.classList.remove('down');
+          icon.classList.add('up');
+        }
+      }
+      frame = requestAnimationFrame(animate)
+    }
+
+    // Adds 10 icons when the add button is pressed
+    addBtn.addEventListener("click", () => {
+      cancelAnimationFrame(frame)
+      numIcons += 10
+      init()
+    })
+
+    // Removes 10 icons when the subtract button is pressed
+    subBtn.addEventListener("click", () => {
+      if(numIcons > 10){
+        cancelAnimationFrame(frame)
+        numIcons -= 10
+        init()
+      }
+    })
+
+    init()
+  </script>
+</html>

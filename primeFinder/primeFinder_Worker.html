@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <title>Prime Finder</title>
+    <meta charset="UTF-8">
+    <style>
+      h1, h2, h3, h4 {
+        display: inline-block;
+        margin: 1rem 0rem 0rem
+      }
+
+      .content {
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .animation-container {
+        display: flex;
+        flex-direction: row;
+        height: 60px;
+        align-items: flex-end;
+      }
+
+      .animated-item {
+        width: 2rem;
+        height: 10px;
+        background-color: #3498db;
+      }
+
+      .calculating-text{
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .animated-dot {
+        height: 15px;
+        width: 15px;
+        margin-left: 1rem;
+        background-color: #3498db;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+
+  <div class="content">
+    <div class="container">
+      <h1>Prime Finder</h1>
+      <h3>Primes are pretty cool, here are some just for you</h3>
+      <div class="animation-container">
+        <p class="calculating-text">Calculating more</p>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+        <div class="animated-dot"></div>
+      </div>
+      <ul id="prime-list"></ul>
+    </div>
+  </div>
+
+  <script>
+      //Create a WebWorker for our heavy computations
+      const primeWorker = new Worker('primeWorker.js')
+
+      // variables for the dots animation
+      const steps = 20
+      let currentIdx = -1 * steps
+
+      // Function for updating the dots animation
+      function animateDots() {
+        const dots = document.getElementsByClassName("animated-dot")
+
+        for(let i = 0; i < dots.length; i++){
+          const comp = steps * (i + 1)
+          const diff = Math.abs(comp - currentIdx)
+          const height = Math.max(1, (steps * 2) - diff)
+          dots[i].style.marginBottom = Math.max(height)
+        }
+
+        if(currentIdx === (steps * 7) + steps) currentIdx = -1 * steps;
+        else currentIdx++
+
+        // Continue the animation by requesting another frame
+        requestAnimationFrame(animateDots)
+      }
+
+      // Start the dots animation by requesting an animation frame
+      requestAnimationFrame(animateDots)
+
+      // Here we request the first batch of primes
+      primeWorker.postMessage(3)
+
+      // Handle the results from our worker
+      // Here we can change the DOM using data returned from our worker
+      primeWorker.addEventListener("message", (e) => {
+          const primes = e.data
+
+          // Add any new primes to the list
+          const primeList = document.getElementById("prime-list")
+          primes.forEach(prime => {
+            const node = document.createElement("LI")
+            node.appendChild(document.createTextNode(prime))
+            primeList.appendChild(node)
+          })
+
+          console.log(primes)
+          primeWorker.postMessage(3)
+      })
+  </script>
+  </body>
+</html>

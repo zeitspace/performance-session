@@ -1,0 +1,155 @@
+<!--
+  This demo is based off of Google Chromes "jank" example
+  https://github.com/GoogleChrome/devtools-samples
+-->
+
+<html>
+  <head>
+    <title>Icon Waterfall</title>
+    <meta charset="UTF-8">
+    <style>
+      body{
+        background-color: #222222;
+      }
+
+      .icon {
+        height: 2rem;
+        width: 2rem;
+        position: absolute;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        width: 8rem;
+        position: absolute;
+        top: 30;
+        left: 20;
+        z-index: 10;
+      }
+
+      .controls button{
+        color: white;
+        padding: 1rem;
+        background-color: #0098fa;
+        border:none;
+        margin-bottom: 1rem;
+      }
+
+      .icon-count{
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <img class="template icon" src="https://s3.amazonaws.com/zeitspace.com/media/background-logo-blue.svg"/>
+    <div class="controls">
+      <button class="add">Add Icons</button>
+      <button class="subtract">Subtract Icons</button>
+      <span class="icon-count">There are 10 icons</span>
+    </div>
+  </body>
+
+  <script>
+    const addBtn = document.querySelector(".add")
+    const subBtn = document.querySelector(".subtract")
+    const template = document.querySelector(".template")
+    const counter = document.querySelector(".icon-count")
+    
+    const documentSize = document.body.getBoundingClientRect()
+    const iconSize = template.getBoundingClientRect()
+    const maxTop = Math.floor(documentSize.height - iconSize.height)
+
+    const step = 5
+    let numIcons = 10
+    let iconList = []
+
+    let frame
+
+     // Setup the animation
+    function init() {
+
+      template.remove()
+
+      // Remove any existing icons
+      if(iconList.length > 0) {
+        for(i = 0; i < iconList.length; i++){
+          document.body.removeChild(iconList[i])
+        }
+      }
+
+      // Add all the icons to the screen
+      for(i = 0; i < numIcons; i++){
+        const icon = template.cloneNode()
+        const top = Math.floor(Math.random() * maxTop)
+
+        icon.style.left = (i / (numIcons / 97)) + 'vw';
+        icon.style.top = top + 'px';
+
+        if(top === maxTop){
+          icon.classList.add("up")
+        } else {
+          icon.classList.add("down")
+        }
+        document.body.appendChild(icon)
+      }
+
+      iconList = document.querySelectorAll('.icon');
+      counter.innerHTML = `There are ${numIcons} icons`
+
+      frame = requestAnimationFrame(animate)
+    }
+
+    // This funciton creates one frame of the animation
+    function animate() {
+      for(i = 0; i < iconList.length; i++){
+        const icon = iconList[i];
+
+        // Often it would be more correct to read the position of every element
+        // before doing any styleu pdates (eg. by reading all the positions in one 
+        // loop, and then writing the new positions in a later loop). However, since
+        // the position of one icon does not affect the position of any other icon
+        // that optimization is not necessary for this code.
+        let pos = parseInt(icon.style.top.slice(0, icon.style.top.indexOf('px')));
+        icon.classList.contains('down') ? pos += step : pos -= step;
+
+        if (pos < 0) pos = 0;
+        if (pos > maxTop) pos = maxTop;
+
+        // Here we're updating the style of our element
+        icon.style.top = pos + 'px';
+
+        // But, now instead of reading the styles of the element
+        // we use the old position cached in the "pos" variable.
+        // This way the browser does not have to recaculate layout.
+        if (pos === 0) {
+          icon.classList.remove('up');
+          icon.classList.add('down');
+        }
+        if (pos === maxTop) {
+          icon.classList.remove('down');
+          icon.classList.add('up');
+        }
+      }
+      frame = requestAnimationFrame(animate)
+    }
+
+    // Adds 10 icons when the add button is pressed
+    addBtn.addEventListener("click", () => {
+      cancelAnimationFrame(frame)
+      numIcons += 10
+      init()
+    })
+
+    // Removes 10 icons when the subtract button is pressed
+    subBtn.addEventListener("click", () => {
+      if(numIcons > 10){
+        cancelAnimationFrame(frame)
+        numIcons -= 10
+        init()
+      }
+    })
+
+    init()
+  </script>
+</html>

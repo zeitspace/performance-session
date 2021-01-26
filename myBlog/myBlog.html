@@ -1,0 +1,133 @@
+<html>
+  <head>
+    <title>My Blog</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background-color: #5fc710;
+            color: #FFF;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 1.2rem 1.6rem;
+        }
+
+        .header-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-link-container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .nav-link {
+            color: #FFF;
+            margin-right: 1rem;
+        }
+
+        .main-content {
+            padding: 1rem 2rem;
+        }
+
+        .post-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 1rem;
+        }
+
+        @media screen and (max-width: 720px){
+            .post-list {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        .post {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+
+        .post-photo {
+            object-fit: cover;
+            height: 20rem;
+            width: 100%;
+        }
+
+        .post-text {
+            padding: 0.6rem 2rem;
+        }
+
+        .page-footer {
+            text-align: center;
+            margin: 1rem;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.js"></script>
+  </head>
+  <body>
+    <header class="header">
+        <h1 class="header-title">Welcome to my blog</h1>
+        <nav class="nav-link-container">
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/archive">Archive</a>
+        </nav>
+    </header>
+    <main class="main-content">
+        <h2>Check out my posts</h2>
+        <div class="post-list">
+        </div>
+    </main>
+    <footer class="page-footer">
+        <p>&#169; 2021 Me, Myself, and I</p>
+    </footer>
+  </body>
+
+  <script>
+      posts = [
+          {title: "I Like Fish", summary: "A nice plate of fish makes a great dish", photo: "/images/fish-dish.png"},
+          {title: "Sandwiches are Neat", summary: "Nothing like having a sandwich for lunch", photo: "/images/sandwich.png"},
+          {title: "Look at a Forest", summary: "You can always take a walk in the forest", photo: "/images/forest.png"},
+          {title: "Arts and crafts", summary: "Arts and crafts are a way to be creative", photo: "/images/crafts.png"},
+          {title: "Travel the World", summary: "Bored at home? Just go travelling", photo: "/images/travel.png"},
+          {title: "My Pets", summary: "Look at photos of my pets", photo: "/images/pets.png"},
+      ]
+
+      document.addEventListener("DOMContentLoaded",() => {
+          const postList = document.querySelector(".post-list")
+
+          posts.forEach(post => {
+            const element = document.createElement("div")
+            element.className = "post"
+
+            const photo = document.createElement("img")
+            photo.className = "post-photo"
+            photo.src = post.photo
+
+            const title = document.createElement("h3")
+            title.innerHTML = post.title
+
+            const summary = document.createElement("p")
+            summary.innerHTML = post.summary
+
+            const postText = document.createElement("div")
+            postText.className = "post-text"
+            postText.appendChild(title)
+            postText.appendChild(summary)
+
+            element.appendChild(photo)
+            element.appendChild(postText)
+
+            postList.appendChild(element)
+          });
+      })
+  </script>
+</html>
