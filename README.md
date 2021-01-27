@@ -5,8 +5,16 @@ As developers we like to make our websites engaging, and animated features are a
 ## Examples
 
 - My Blog: Using Lighthouse to asses loading performance
-- Prime Finder: Prevent work from blocking main thread
+  - [Naive Version](https://zeitspace.github.io/performance-session/myBlog/naive.html)
+  - [Better Version](https://zeitspace.github.io/performance-session/myBlog/better.html)
 - Icon Waterfall: Use CSS efficiently
+  - [Naive Version](https://zeitspace.github.io/performance-session/iconWaterfall/naive.html)
+  - [Better Version](https://zeitspace.github.io/performance-session/iconWaterfall/better.html)
+  - [Best Version](https://zeitspace.github.io/performance-session/iconWaterfall/best.html)
+- Prime Finder: Prevent work from blocking main thread
+  - [Naive Version](https://zeitspace.github.io/performance-session/primeFinder/naive.html)
+  - [Better Version](https://zeitspace.github.io/performance-session/primeFinder/better.html)
+  - [WebWorker Version](https://zeitspace.github.io/performance-session/primeFinder/worker.html)
 
 ## Useful Links
 
